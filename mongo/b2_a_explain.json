@@ -1,0 +1,188 @@
+{
+  "explainVersion": "1",
+  "stages": [
+    {
+      "$cursor": {
+        "queryPlanner": {
+          "namespace": "logiporto.movimentacoes",
+          "indexFilterSet": false,
+          "parsedQuery": {},
+          "queryHash": "B2D86C42",
+          "planCacheKey": "B2D86C42",
+          "optimizationTimeMillis": 0,
+          "maxIndexedOrSolutionsReached": false,
+          "maxIndexedAndSolutionsReached": false,
+          "maxScansToExplodeReached": false,
+          "winningPlan": {
+            "stage": "PROJECTION_SIMPLE",
+            "transformBy": {
+              "_id": true,
+              "terminal": true,
+              "classe": true
+            },
+            "inputStage": {
+              "stage": "COLLSCAN",
+              "direction": "forward"
+            }
+          },
+          "rejectedPlans": []
+        },
+        "executionStats": {
+          "executionSuccess": true,
+          "nReturned": 400000,
+          "executionTimeMillis": 339,
+          "totalKeysExamined": 0,
+          "totalDocsExamined": 400000,
+          "executionStages": {
+            "stage": "PROJECTION_SIMPLE",
+            "nReturned": 400000,
+            "executionTimeMillisEstimate": 6,
+            "works": 400001,
+            "advanced": 400000,
+            "needTime": 0,
+            "needYield": 0,
+            "saveState": 419,
+            "restoreState": 419,
+            "isEOF": 1,
+            "transformBy": {
+              "_id": true,
+              "terminal": true,
+              "classe": true
+            },
+            "inputStage": {
+              "stage": "COLLSCAN",
+              "nReturned": 400000,
+              "executionTimeMillisEstimate": 1,
+              "works": 400001,
+              "advanced": 400000,
+              "needTime": 0,
+              "needYield": 0,
+              "saveState": 419,
+              "restoreState": 419,
+              "isEOF": 1,
+              "direction": "forward",
+              "docsExamined": 400000
+            }
+          }
+        }
+      },
+      "nReturned": 400000,
+      "executionTimeMillisEstimate": 234
+    },
+    {
+      "$group": {
+        "_id": {
+          "terminal": "$terminal",
+          "classe": "$classe"
+        },
+        "kg_total": {
+          "$sum": {
+            "$const": "peso_kg"
+          }
+        },
+        "mov": {
+          "$sum": {
+            "$const": 1
+          }
+        }
+      },
+      "maxAccumulatorMemoryUsageBytes": {
+        "kg_total": 1920,
+        "mov": 1920
+      },
+      "totalOutputDataSizeBytes": 1566,
+      "usedDisk": false,
+      "spills": 0,
+      "spilledDataStorageSize": 0,
+      "numBytesSpilledEstimate": 0,
+      "spilledRecords": 0,
+      "nReturned": 3,
+      "executionTimeMillisEstimate": 337
+    },
+    {
+      "$limit": 3,
+      "nReturned": 3,
+      "executionTimeMillisEstimate": 337
+    },
+    {
+      "$match": {
+        "_id.classe": {
+          "$eq": "Refrigerado"
+        }
+      },
+      "nReturned": 2,
+      "executionTimeMillisEstimate": 337
+    },
+    {
+      "$sort": {
+        "sortKey": {
+          "kg_total": -1
+        }
+      },
+      "totalDataSizeSortedBytesEstimate": 1060,
+      "usedDisk": false,
+      "spills": 0,
+      "spilledDataStorageSize": 0,
+      "nReturned": 2,
+      "executionTimeMillisEstimate": 337
+    }
+  ],
+  "serverInfo": {
+    "host": "2a3924ffd077",
+    "port": 27017,
+    "version": "7.0.48",
+    "gitVersion": "6937736f0539a5d4c8edb2970255b9369cb385a5"
+  },
+  "serverParameters": {
+    "internalQueryFacetBufferSizeBytes": 104857600,
+    "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+    "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+    "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+    "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+    "internalQueryProhibitBlockingMergeOnMongoS": 0,
+    "internalQueryMaxAddToSetBytes": 104857600,
+    "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+    "internalQueryFrameworkControl": "forceClassicEngine"
+  },
+  "command": {
+    "aggregate": "movimentacoes",
+    "pipeline": [
+      {
+        "$project": {
+          "terminal": 1,
+          "classe": 1
+        }
+      },
+      {
+        "$group": {
+          "_id": {
+            "terminal": "$terminal",
+            "classe": "$classe"
+          },
+          "kg_total": {
+            "$sum": "peso_kg"
+          },
+          "mov": {
+            "$sum": 1
+          }
+        }
+      },
+      {
+        "$limit": 3
+      },
+      {
+        "$sort": {
+          "kg_total": -1
+        }
+      },
+      {
+        "$match": {
+          "_id.classe": "Refrigerado"
+        }
+      }
+    ],
+    "cursor": {},
+    "$db": "logiporto"
+  },
+  "ok": 1
+}

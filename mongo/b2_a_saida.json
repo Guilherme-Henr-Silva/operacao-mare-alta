@@ -1,0 +1,18 @@
+[
+  {
+    "_id": {
+      "terminal": "T2",
+      "classe": "Refrigerado"
+    },
+    "kg_total": 0,
+    "mov": 19978
+  },
+  {
+    "_id": {
+      "terminal": "T4",
+      "classe": "Refrigerado"
+    },
+    "kg_total": 0,
+    "mov": 19852
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "total_mov": 14049,
+    "peso_total": 225871677,
+    "peso_medio": 16077.420243433697,
+    "maior_peso": 30997,
+    "terminal": "T3"
+  },
+  {
+    "total_mov": 13973,
+    "peso_total": 225302634,
+    "peso_medio": 16124.14184498676,
+    "maior_peso": 30996,
+    "terminal": "T2"
+  },
+  {
+    "total_mov": 13920,
+    "peso_total": 223426386,
+    "peso_medio": 16050.746120689655,
+    "maior_peso": 30999,
+    "terminal": "T1"
+  },
+  {
+    "total_mov": 13897,
+    "peso_total": 222314918,
+    "peso_medio": 15997.33165431388,
+    "maior_peso": 30993,
+    "terminal": "T4"
+  },
+  {
+    "total_mov": 13897,
+    "peso_total": 222085401,
+    "peso_medio": 15980.81607541196,
+    "maior_peso": 30998,
+    "terminal": "T5"
+  }
+]

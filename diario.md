@@ -38,3 +38,24 @@
 
 - `getIndexes()` em `movimentacoes`: `_id_`, ESR da A1, 2dsphere da A2 e o coberto da A4. Cada um é usado por uma questão, então nenhum sobrando.
 - O TTL ficou em `alertas`, porque é a política de retenção que o enunciado pede.
+
+## B1
+
+- **Acertei** a ordem de grandeza: previ ~70 mil docs entrando no `$group` e deram 69.736. Também acertei o plano coberto (0 docs examinados com o índice `{classe, ts, terminal, peso_kg}`).
+- **Errei a incerteza do formato:** achei que o Mongo 7 podia empurrar o `$group` pro motor SBE e o explain viria diferente. Veio no formato clássico, com o `$cursor` separado do `$group`. Foi até melhor, porque o `$cursor.nReturned` mostra direto quantos entraram no group.
+- Fiquei na dúvida se valia criar só `{classe, ts}`, que é o mínimo pro `$match`. Com ele, o Mongo ia ter que buscar os ~70 mil documentos (FETCH) só pra ler `terminal` e `peso_kg`. Colocando os dois campos no fim do índice, a consulta fica coberta. E ainda pretendo usar esse mesmo índice na B2, então ele se paga.
+- O top 3 ficou bem apertado: T2 e T3 têm diferença de ~570 toneladas em 225 mil. Conferi rodando sem o `$limit` e vendo os 5 grupos.
+- Detalhe bobo: o campo `terminal` aparece por último na saída, porque o `$project` põe os campos calculados depois dos que já existiam. Não muda nada no resultado.
+
+## B2
+
+- **Acertei** que `kg_total` ia dar 0 e que o `$group` ia receber os 400 mil docs via COLLSCAN. O explain até mostra `$sum: {$const: "peso_kg"}`, a prova de que ele leu como texto.
+- **Errei** o tamanho da saída: chutei "0 ou 1 documento" (cada um dos 3 grupos tem 1/4 de chance de ser Refrigerado) e vieram **2**. Não é que a conta esteja errada, só caiu pro lado menos provável. Rodei só até o `$limit` pra ver quais 3 grupos ele tinha pego: T1/Perigoso, T2/Refrigerado e T4/Refrigerado.
+- Não esperava ver o otimizador mexendo no pipeline: no explain a ordem ficou `$group → $limit → $match → $sort`. Ele trocou `$sort` e `$match` porque isso não muda o resultado. Mas ele não passa o `$match` pra antes do `$limit`, e é por isso que os erros de lógica continuam.
+- No corrigido, previ ~100 mil chaves, 0 docs e uso do índice da B1. Deram 99.885 chaves, 0 docs e o índice `classe_1_ts_1_terminal_1_peso_kg_1`. Também chutei ~320 milhões de kg por terminal, e ficou entre 318 e 323 milhões.
+- Pra provar que o corrigido está certo, não quis comparar com outro aggregate (que podia ter o mesmo erro). Fiz a soma "na mão" em JavaScript com `find().forEach()`, e os 5 terminais bateram.
+- O `mov` do T2/Refrigerado deu 19.978 nas duas versões, que é o mesmo número do meu código de autenticidade. Boa conferência de que o banco é o meu mesmo.
+
+## Fim da Parte B — índices
+
+- Ficaram 5 índices em `movimentacoes`, cada um vencedor em alguma questão. A B2 não precisou de índice novo, porque reaproveitou o da B1. Foi por isso que coloquei `terminal` e `peso_kg` nele.

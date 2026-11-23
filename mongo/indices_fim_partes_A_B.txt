@@ -1,0 +1,58 @@
+// db.movimentacoes.getIndexes()  (fim das Partes A e B)
+[
+  {
+    name: '_id_',
+    key: {
+      _id: 1
+    }
+  },
+  {
+    name: 'terminal_1_classe_1_peso_kg_-1_ts_1',
+    key: {
+      terminal: 1,
+      classe: 1,
+      peso_kg: -1,
+      ts: 1
+    }
+  },
+  {
+    name: 'posicao_2dsphere',
+    key: {
+      posicao: '2dsphere'
+    }
+  },
+  {
+    name: 'tipo_1_terminal_1_container_1',
+    key: {
+      tipo: 1,
+      terminal: 1,
+      container: 1
+    }
+  },
+  {
+    name: 'classe_1_ts_1_terminal_1_peso_kg_1',
+    key: {
+      classe: 1,
+      ts: 1,
+      terminal: 1,
+      peso_kg: 1
+    }
+  }
+]
+
+// db.alertas.getIndexes()
+[
+  {
+    name: '_id_',
+    key: {
+      _id: 1
+    }
+  },
+  {
+    name: 'registrado_em_1',
+    key: {
+      registrado_em: 1
+    },
+    expireAfterSeconds: 2592000
+  }
+]

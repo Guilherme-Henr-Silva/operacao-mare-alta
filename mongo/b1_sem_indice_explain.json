@@ -1,0 +1,249 @@
+{
+  "explainVersion": "1",
+  "stages": [
+    {
+      "$cursor": {
+        "queryPlanner": {
+          "namespace": "logiporto.movimentacoes",
+          "indexFilterSet": false,
+          "parsedQuery": {
+            "$and": [
+              {
+                "classe": {
+                  "$eq": "Refrigerado"
+                }
+              },
+              {
+                "ts": {
+                  "$gte": {
+                    "$date": "2026-04-01T00:00:00Z"
+                  }
+                }
+              }
+            ]
+          },
+          "queryHash": "94D1B9B9",
+          "planCacheKey": "576B5BF7",
+          "optimizationTimeMillis": 5,
+          "maxIndexedOrSolutionsReached": false,
+          "maxIndexedAndSolutionsReached": false,
+          "maxScansToExplodeReached": false,
+          "winningPlan": {
+            "stage": "PROJECTION_SIMPLE",
+            "transformBy": {
+              "peso_kg": 1,
+              "terminal": 1,
+              "_id": 0
+            },
+            "inputStage": {
+              "stage": "COLLSCAN",
+              "filter": {
+                "$and": [
+                  {
+                    "classe": {
+                      "$eq": "Refrigerado"
+                    }
+                  },
+                  {
+                    "ts": {
+                      "$gte": {
+                        "$date": "2026-04-01T00:00:00Z"
+                      }
+                    }
+                  }
+                ]
+              },
+              "direction": "forward"
+            }
+          },
+          "rejectedPlans": []
+        },
+        "executionStats": {
+          "executionSuccess": true,
+          "nReturned": 69736,
+          "executionTimeMillis": 1330,
+          "totalKeysExamined": 0,
+          "totalDocsExamined": 400000,
+          "executionStages": {
+            "stage": "PROJECTION_SIMPLE",
+            "nReturned": 69736,
+            "executionTimeMillisEstimate": 400,
+            "works": 400001,
+            "advanced": 69736,
+            "needTime": 330264,
+            "needYield": 0,
+            "saveState": 406,
+            "restoreState": 406,
+            "isEOF": 1,
+            "transformBy": {
+              "peso_kg": 1,
+              "terminal": 1,
+              "_id": 0
+            },
+            "inputStage": {
+              "stage": "COLLSCAN",
+              "filter": {
+                "$and": [
+                  {
+                    "classe": {
+                      "$eq": "Refrigerado"
+                    }
+                  },
+                  {
+                    "ts": {
+                      "$gte": {
+                        "$date": "2026-04-01T00:00:00Z"
+                      }
+                    }
+                  }
+                ]
+              },
+              "nReturned": 69736,
+              "executionTimeMillisEstimate": 349,
+              "works": 400001,
+              "advanced": 69736,
+              "needTime": 330264,
+              "needYield": 0,
+              "saveState": 406,
+              "restoreState": 406,
+              "isEOF": 1,
+              "direction": "forward",
+              "docsExamined": 400000
+            }
+          }
+        }
+      },
+      "nReturned": 69736,
+      "executionTimeMillisEstimate": 1268
+    },
+    {
+      "$group": {
+        "_id": "$terminal",
+        "total_mov": {
+          "$sum": {
+            "$const": 1
+          }
+        },
+        "peso_total": {
+          "$sum": "$peso_kg"
+        },
+        "peso_medio": {
+          "$avg": "$peso_kg"
+        },
+        "maior_peso": {
+          "$max": "$peso_kg"
+        }
+      },
+      "maxAccumulatorMemoryUsageBytes": {
+        "total_mov": 480,
+        "peso_total": 480,
+        "peso_medio": 520,
+        "maior_peso": 360
+      },
+      "totalOutputDataSizeBytes": 1705,
+      "usedDisk": false,
+      "spills": 0,
+      "spilledDataStorageSize": 0,
+      "numBytesSpilledEstimate": 0,
+      "spilledRecords": 0,
+      "nReturned": 5,
+      "executionTimeMillisEstimate": 1289
+    },
+    {
+      "$sort": {
+        "sortKey": {
+          "peso_total": -1
+        },
+        "limit": 3
+      },
+      "totalDataSizeSortedBytesEstimate": 1047,
+      "usedDisk": false,
+      "spills": 0,
+      "spilledDataStorageSize": 0,
+      "nReturned": 3,
+      "executionTimeMillisEstimate": 1299
+    },
+    {
+      "$project": {
+        "total_mov": true,
+        "peso_total": true,
+        "peso_medio": true,
+        "maior_peso": true,
+        "terminal": "$_id",
+        "_id": false
+      },
+      "nReturned": 3,
+      "executionTimeMillisEstimate": 1299
+    }
+  ],
+  "serverInfo": {
+    "host": "2a3924ffd077",
+    "port": 27017,
+    "version": "7.0.48",
+    "gitVersion": "6937736f0539a5d4c8edb2970255b9369cb385a5"
+  },
+  "serverParameters": {
+    "internalQueryFacetBufferSizeBytes": 104857600,
+    "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+    "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+    "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+    "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+    "internalQueryProhibitBlockingMergeOnMongoS": 0,
+    "internalQueryMaxAddToSetBytes": 104857600,
+    "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+    "internalQueryFrameworkControl": "forceClassicEngine"
+  },
+  "command": {
+    "aggregate": "movimentacoes",
+    "pipeline": [
+      {
+        "$match": {
+          "classe": "Refrigerado",
+          "ts": {
+            "$gte": {
+              "$date": "2026-04-01T00:00:00Z"
+            }
+          }
+        }
+      },
+      {
+        "$group": {
+          "_id": "$terminal",
+          "total_mov": {
+            "$sum": 1
+          },
+          "peso_total": {
+            "$sum": "$peso_kg"
+          },
+          "peso_medio": {
+            "$avg": "$peso_kg"
+          },
+          "maior_peso": {
+            "$max": "$peso_kg"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "peso_total": -1
+        }
+      },
+      {
+        "$limit": 3
+      },
+      {
+        "$project": {
+          "_id": 0,
+          "terminal": "$_id",
+          "total_mov": 1,
+          "peso_total": 1,
+          "peso_medio": 1,
+          "maior_peso": 1
+        }
+      }
+    ],
+    "cursor": {},
+    "$db": "logiporto"
+  },
+  "ok": 1
+}

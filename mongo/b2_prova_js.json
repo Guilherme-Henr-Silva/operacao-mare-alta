@@ -1,0 +1,27 @@
+[
+  {
+    "terminal": "T3",
+    "kg_total": 323503944,
+    "mov": 20151
+  },
+  {
+    "terminal": "T2",
+    "kg_total": 321502486,
+    "mov": 19978
+  },
+  {
+    "terminal": "T1",
+    "kg_total": 321374184,
+    "mov": 19953
+  },
+  {
+    "terminal": "T5",
+    "kg_total": 318443597,
+    "mov": 19951
+  },
+  {
+    "terminal": "T4",
+    "kg_total": 317995417,
+    "mov": 19852
+  }
+]

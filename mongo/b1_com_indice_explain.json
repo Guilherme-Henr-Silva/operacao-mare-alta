@@ -1,0 +1,284 @@
+{
+  "explainVersion": "1",
+  "stages": [
+    {
+      "$cursor": {
+        "queryPlanner": {
+          "namespace": "logiporto.movimentacoes",
+          "indexFilterSet": false,
+          "parsedQuery": {
+            "$and": [
+              {
+                "classe": {
+                  "$eq": "Refrigerado"
+                }
+              },
+              {
+                "ts": {
+                  "$gte": {
+                    "$date": "2026-04-01T00:00:00Z"
+                  }
+                }
+              }
+            ]
+          },
+          "queryHash": "94D1B9B9",
+          "planCacheKey": "F6728CB4",
+          "optimizationTimeMillis": 2,
+          "maxIndexedOrSolutionsReached": false,
+          "maxIndexedAndSolutionsReached": false,
+          "maxScansToExplodeReached": false,
+          "winningPlan": {
+            "stage": "PROJECTION_COVERED",
+            "transformBy": {
+              "peso_kg": 1,
+              "terminal": 1,
+              "_id": 0
+            },
+            "inputStage": {
+              "stage": "IXSCAN",
+              "keyPattern": {
+                "classe": 1,
+                "ts": 1,
+                "terminal": 1,
+                "peso_kg": 1
+              },
+              "indexName": "classe_1_ts_1_terminal_1_peso_kg_1",
+              "isMultiKey": false,
+              "multiKeyPaths": {
+                "classe": [],
+                "ts": [],
+                "terminal": [],
+                "peso_kg": []
+              },
+              "isUnique": false,
+              "isSparse": false,
+              "isPartial": false,
+              "indexVersion": 2,
+              "direction": "forward",
+              "indexBounds": {
+                "classe": [
+                  "[\"Refrigerado\", \"Refrigerado\"]"
+                ],
+                "ts": [
+                  "[new Date(1775001600000), new Date(9223372036854775807)]"
+                ],
+                "terminal": [
+                  "[MinKey, MaxKey]"
+                ],
+                "peso_kg": [
+                  "[MinKey, MaxKey]"
+                ]
+              }
+            }
+          },
+          "rejectedPlans": []
+        },
+        "executionStats": {
+          "executionSuccess": true,
+          "nReturned": 69736,
+          "executionTimeMillis": 109,
+          "totalKeysExamined": 69736,
+          "totalDocsExamined": 0,
+          "executionStages": {
+            "stage": "PROJECTION_COVERED",
+            "nReturned": 69736,
+            "executionTimeMillisEstimate": 10,
+            "works": 69737,
+            "advanced": 69736,
+            "needTime": 0,
+            "needYield": 0,
+            "saveState": 73,
+            "restoreState": 73,
+            "isEOF": 1,
+            "transformBy": {
+              "peso_kg": 1,
+              "terminal": 1,
+              "_id": 0
+            },
+            "inputStage": {
+              "stage": "IXSCAN",
+              "nReturned": 69736,
+              "executionTimeMillisEstimate": 8,
+              "works": 69737,
+              "advanced": 69736,
+              "needTime": 0,
+              "needYield": 0,
+              "saveState": 73,
+              "restoreState": 73,
+              "isEOF": 1,
+              "keyPattern": {
+                "classe": 1,
+                "ts": 1,
+                "terminal": 1,
+                "peso_kg": 1
+              },
+              "indexName": "classe_1_ts_1_terminal_1_peso_kg_1",
+              "isMultiKey": false,
+              "multiKeyPaths": {
+                "classe": [],
+                "ts": [],
+                "terminal": [],
+                "peso_kg": []
+              },
+              "isUnique": false,
+              "isSparse": false,
+              "isPartial": false,
+              "indexVersion": 2,
+              "direction": "forward",
+              "indexBounds": {
+                "classe": [
+                  "[\"Refrigerado\", \"Refrigerado\"]"
+                ],
+                "ts": [
+                  "[new Date(1775001600000), new Date(9223372036854775807)]"
+                ],
+                "terminal": [
+                  "[MinKey, MaxKey]"
+                ],
+                "peso_kg": [
+                  "[MinKey, MaxKey]"
+                ]
+              },
+              "keysExamined": 69736,
+              "seeks": 1,
+              "dupsTested": 0,
+              "dupsDropped": 0
+            }
+          }
+        }
+      },
+      "nReturned": 69736,
+      "executionTimeMillisEstimate": 79
+    },
+    {
+      "$group": {
+        "_id": "$terminal",
+        "total_mov": {
+          "$sum": {
+            "$const": 1
+          }
+        },
+        "peso_total": {
+          "$sum": "$peso_kg"
+        },
+        "peso_medio": {
+          "$avg": "$peso_kg"
+        },
+        "maior_peso": {
+          "$max": "$peso_kg"
+        }
+      },
+      "maxAccumulatorMemoryUsageBytes": {
+        "total_mov": 480,
+        "peso_total": 480,
+        "peso_medio": 520,
+        "maior_peso": 360
+      },
+      "totalOutputDataSizeBytes": 1705,
+      "usedDisk": false,
+      "spills": 0,
+      "spilledDataStorageSize": 0,
+      "numBytesSpilledEstimate": 0,
+      "spilledRecords": 0,
+      "nReturned": 5,
+      "executionTimeMillisEstimate": 105
+    },
+    {
+      "$sort": {
+        "sortKey": {
+          "peso_total": -1
+        },
+        "limit": 3
+      },
+      "totalDataSizeSortedBytesEstimate": 1047,
+      "usedDisk": false,
+      "spills": 0,
+      "spilledDataStorageSize": 0,
+      "nReturned": 3,
+      "executionTimeMillisEstimate": 105
+    },
+    {
+      "$project": {
+        "total_mov": true,
+        "peso_total": true,
+        "peso_medio": true,
+        "maior_peso": true,
+        "terminal": "$_id",
+        "_id": false
+      },
+      "nReturned": 3,
+      "executionTimeMillisEstimate": 105
+    }
+  ],
+  "serverInfo": {
+    "host": "2a3924ffd077",
+    "port": 27017,
+    "version": "7.0.48",
+    "gitVersion": "6937736f0539a5d4c8edb2970255b9369cb385a5"
+  },
+  "serverParameters": {
+    "internalQueryFacetBufferSizeBytes": 104857600,
+    "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+    "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+    "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+    "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+    "internalQueryProhibitBlockingMergeOnMongoS": 0,
+    "internalQueryMaxAddToSetBytes": 104857600,
+    "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+    "internalQueryFrameworkControl": "forceClassicEngine"
+  },
+  "command": {
+    "aggregate": "movimentacoes",
+    "pipeline": [
+      {
+        "$match": {
+          "classe": "Refrigerado",
+          "ts": {
+            "$gte": {
+              "$date": "2026-04-01T00:00:00Z"
+            }
+          }
+        }
+      },
+      {
+        "$group": {
+          "_id": "$terminal",
+          "total_mov": {
+            "$sum": 1
+          },
+          "peso_total": {
+            "$sum": "$peso_kg"
+          },
+          "peso_medio": {
+            "$avg": "$peso_kg"
+          },
+          "maior_peso": {
+            "$max": "$peso_kg"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "peso_total": -1
+        }
+      },
+      {
+        "$limit": 3
+      },
+      {
+        "$project": {
+          "_id": 0,
+          "terminal": "$_id",
+          "total_mov": 1,
+          "peso_total": 1,
+          "peso_medio": 1,
+          "maior_peso": 1
+        }
+      }
+    ],
+    "cursor": {},
+    "$db": "logiporto"
+  },
+  "ok": 1
+}
