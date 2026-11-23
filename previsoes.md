@@ -107,3 +107,28 @@ Quantos docs entram no `$group`: Refrigerado é ~1/4 da coleção (~100 mil), e 
 | nReturned final | 3 | 3 |
 
 Incerteza: no Mongo 7 o `$group` pode ser "empurrado" para o motor SBE, e aí o explain vem num formato diferente, com GROUP dentro do plano da query em vez de um estágio `$group` separado. Vou ler o número de docs que entram no group pelo `nReturned` do estágio logo abaixo do GROUP (ou do `$cursor`, se vier no formato clássico). Também não tenho 100% de certeza de que ele vai escolher o plano coberto. Se der FETCH, o docsExamined vai ser ~70 mil.
+
+## B2 — Debug do pipeline
+
+Pipeline original (com CLASSE_ALVO = "Refrigerado"):
+
+```js
+[ { $project: { terminal: 1, classe: 1 } },
+  { $group: { _id: { terminal: "$terminal", classe: "$classe" }, kg_total: { $sum: "peso_kg" }, mov: { $sum: 1 } } },
+  { $limit: 3 },
+  { $sort: { kg_total: -1 } },
+  { $match: { "_id.classe": "Refrigerado" } } ]
+```
+
+**O que acho que vai sair rodando como está:**
+- `$sum: "peso_kg"` sem `$` é uma string literal, não o campo. O `$sum` ignora valores que não são número, então `kg_total` vai dar **0** em todos os grupos. Mesmo com o `$`, daria 0, porque o `$project` do começo jogou o `peso_kg` fora.
+- O `$group` vai gerar **20 grupos** (5 terminais × 4 classes), com `mov` ~20 mil cada (400.000/20).
+- O `$limit: 3` pega 3 grupos **quaisquer**, já que a saída do `$group` não tem ordem garantida, e só depois vem o `$sort`.
+- O `$match` no fim filtra esses 3 e mantém só os de Refrigerado. A chance de cada um ser Refrigerado é 1/4, então o mais provável é sair **0 ou 1 documento**, com `kg_total: 0`. Se sair alguma coisa, vai estar errada (peso 0).
+
+**Plano (rodando como está):** COLLSCAN, `totalDocsExamined` = **400.000**, todos os 400 mil entram no `$group`, nenhum índice usado (o `$match` está no fim, então não dá pra empurrar pro começo; ele filtra `_id.classe`, que nem existe na coleção). SORT em memória em cima de 3 docs (irrelevante).
+
+**Depois de corrigir** (`$match` primeiro, `$group` por `terminal` com `$sum: "$peso_kg"`, `$sort` → `$limit` → `$project`):
+- Deve usar o índice da B1 `{classe, ts, terminal, peso_kg}`, com `classe` igual e `ts` de MinKey a MaxKey, **coberto**: `totalDocsExamined` 0 e `totalKeysExamined` ~100.000 (todos os Refrigerado do ano).
+- ~100.000 docs entram no `$group`, saem 5 grupos e o resultado final tem 3.
+- Os pesos totais devem ficar na casa de ~320 milhões de kg por terminal (~20 mil movimentações × ~16 mil kg).
