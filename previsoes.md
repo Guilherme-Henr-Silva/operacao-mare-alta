@@ -54,3 +54,23 @@ Hipóteses alternativas que vou descartar no caminho:
 - Pouco tempo de espera (o monitor roda a cada 60 s). Também acho que não: o enunciado diz "horas depois". Além disso, como hoje é 23/11/2026 e todas as datas estão entre jan e out/2026, quase tudo já passou dos 30 dias e deveria ter sumido.
 
 Correção esperada: gravar os novos alertas com `registrado_em: new Date()` (BSON Date) e manter o índice `{registrado_em: 1}` com `expireAfterSeconds: 2592000`.
+
+## A4 — Consulta coberta
+
+Consulta: `find({tipo:"inspecao", terminal:"T2"}, {_id:0, container:1})`
+
+Índice que pretendo criar: `{tipo: 1, terminal: 1, container: 1}`. Os dois primeiros são igualdade, e o `container` entra no fim só para a projeção ser respondida pelo índice. A ordem entre `tipo` e `terminal` não deve importar, porque os dois são igualdade.
+
+Quantos docs: `tipo` tem 5 valores e `terminal` também, então ~400.000 / 25 ≈ **16.000**.
+
+| | com `_id: 0` | sem `_id: 0` |
+|---|---|---|
+| Stage esperado | `PROJECTION_COVERED → IXSCAN` | `PROJECTION_SIMPLE → FETCH → IXSCAN` |
+| totalKeysExamined | ~16.000 | ~16.000 |
+| totalDocsExamined | **0** | ~16.000 |
+| SORT em memória | não | não |
+| nReturned | ~16.000 | ~16.000 |
+
+Por quê: a projeção sempre inclui o `_id`, a não ser que eu tire. O `_id` não está no índice, então, sem o `_id: 0`, o Mongo precisa ir em cada documento só para pegar o `_id`. Aí volta o FETCH e a consulta deixa de ser coberta.
+
+Também acho que o planner vai considerar o índice ESR da A1 (que começa por `terminal`) como candidato e rejeitar. Ele pegaria ~80 mil chaves de T2 e teria que filtrar `tipo` no documento. Então espero 1 plano rejeitado.
