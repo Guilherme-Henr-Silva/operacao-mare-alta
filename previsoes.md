@@ -25,3 +25,18 @@ Raciocínio antes de rodar:
 Por que acho isso:
 - **b)** O `ts` é um range e vem antes do `peso_kg` no índice. Dentro do pedaço T2/Refrigerado, as chaves ficam ordenadas primeiro por `ts` e só depois por peso. Assim, a ordem por peso só vale dentro de cada valor de ts, que é quase único. O Mongo vai ter que ler todos os ~14 mil e ordenar na memória.
 - **c)** Com as igualdades primeiro e o `peso_kg` logo depois, o índice já entrega na ordem do sort. O filtro de `ts` é aplicado nas próprias chaves, e uns 70% delas passam. Então ele deve parar depois de ler umas 20/0,7 ≈ 29 chaves e buscar só os 20 documentos. Não sei direito se o contador de chaves vai somar alguma coisa a mais por causa dos "pulos" de bound no ts, por isso coloquei "algumas dezenas".
+
+## A2 — Incidente no pátio
+
+Ponto do Google Maps: `-25.4680, -48.4930` (lat, lon). Em GeoJSON fica `coordinates: [-48.4930, -25.4680]` (lon, lat). Se eu inverter, o ponto cai em latitude -48, longe de tudo, e a consulta volta vazia.
+
+Consulta que vou usar: `find({posicao: {$near: {$geometry: {type:"Point", coordinates:[-48.4930, -25.4680]}, $maxDistance: 300}}}).limit(10)`
+
+**Antes do índice:** acho que vai dar **erro**, não COLLSCAN. O `$near` precisa de índice geoespacial para conseguir ordenar por distância. A mensagem deve ser algo como "unable to find index for $geoNear query" (erro de planner, sem plano possível).
+
+**Depois do `createIndex({posicao: "2dsphere"})`:**
+- Stage esperado: `LIMIT → GEO_NEAR_2DSPHERE`, e dentro dele `FETCH → IXSCAN` sobre as células S2 do índice. Não espero estágio SORT separado: a ordenação por distância é feita pelo próprio GEO_NEAR, que vai buscando em anéis cada vez maiores.
+- Quantos docs existem no raio: os pontos são uniformes num quadrado de 0,05° × 0,05° (~5,0 km × 5,55 km ≈ 27,8 km²). Um círculo de 300 m tem ~0,28 km², ou seja ~1% da área, o que dá **~4.000 docs** no raio. O ponto do incidente está longe das bordas do quadrado, então o círculo cabe inteiro.
+- Mas, com o limit 10, o GEO_NEAR não deve ler todos. Ele começa num anel pequeno perto do centro. Chuto `totalDocsExamined` e `totalKeysExamined` na casa das **dezenas a poucas centenas**, bem abaixo de 4 mil. Não tenho certeza do tamanho do primeiro anel, então isso é o ponto mais incerto.
+- SORT em memória: não (sem estágio SORT).
+- nReturned: **10**.
