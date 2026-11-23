@@ -1,0 +1,9 @@
+rotulo, qtd
+"Container", 90
+"Empresa", 30
+"Terminal", 5
+tipo, qtd
+"EMPILHADO_SOBRE", 45
+"PASSOU_POR", 180
+"PERTENCE_A", 90
+"SOCIA_DE", 45
