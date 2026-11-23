@@ -74,3 +74,36 @@ Quantos docs: `tipo` tem 5 valores e `terminal` também, então ~400.000 / 25 �
 Por quê: a projeção sempre inclui o `_id`, a não ser que eu tire. O `_id` não está no índice, então, sem o `_id: 0`, o Mongo precisa ir em cada documento só para pegar o `_id`. Aí volta o FETCH e a consulta deixa de ser coberta.
 
 Também acho que o planner vai considerar o índice ESR da A1 (que começa por `terminal`) como candidato e rejeitar. Ele pegaria ~80 mil chaves de T2 e teria que filtrar `tipo` no documento. Então espero 1 plano rejeitado.
+
+## B1 — Relatório gerencial
+
+Pipeline que vou usar:
+
+```js
+[
+  { $match: { classe: "Refrigerado", ts: { $gte: ISODate("2026-04-01") } } },
+  { $group: { _id: "$terminal", total_mov: { $sum: 1 }, peso_total: { $sum: "$peso_kg" },
+              peso_medio: { $avg: "$peso_kg" }, maior_peso: { $max: "$peso_kg" } } },
+  { $sort: { peso_total: -1 } },
+  { $limit: 3 },
+  { $project: { _id: 0, terminal: "$_id", total_mov: 1, peso_total: 1, peso_medio: 1, maior_peso: 1 } }
+]
+```
+
+Quantos docs entram no `$group`: Refrigerado é ~1/4 da coleção (~100 mil), e ~70% tem `ts >= abril`. Então devem entrar **~70.000 docs** no `$group`. Saem 5 grupos (T1..T5), e depois do `$limit` ficam **3**. Os totais por terminal devem ser parecidos (~14 mil movimentações cada, peso médio perto de 16.000 kg, já que o peso vai de 1.000 a 30.999), e o top 3 vai ser decidido por diferenças pequenas.
+
+Índice: vou criar **`{classe: 1, ts: 1, terminal: 1, peso_kg: 1}`**.
+- `classe` (igualdade) e `ts` (range) atendem o `$match`. Nenhum índice da Parte A serve aqui, porque todos começam por outro campo (`terminal`, `posicao`, `tipo`).
+- `terminal` e `peso_kg` no fim são os únicos campos de que o `$group` precisa. Com isso, a ideia é o Mongo nem abrir os documentos (consulta coberta dentro do aggregate).
+- De quebra, o mesmo índice deve servir o pipeline corrigido da B2 (`classe` igual, `ts` sem filtro). Assim não preciso de um índice só pra B2.
+
+| | sem índice novo | com `{classe, ts, terminal, peso_kg}` |
+|---|---|---|
+| Stage de acesso | COLLSCAN | IXSCAN + projeção coberta (sem FETCH) |
+| totalDocsExamined | 400.000 | **0** (se cobrir mesmo) |
+| totalKeysExamined | 0 | ~70.000 |
+| Docs que entram no `$group` | ~70.000 | ~70.000 (o índice não muda quantos, muda o custo de achar) |
+| SORT em memória | só do `$sort` em cima de 5 grupos (irrelevante) | idem |
+| nReturned final | 3 | 3 |
+
+Incerteza: no Mongo 7 o `$group` pode ser "empurrado" para o motor SBE, e aí o explain vem num formato diferente, com GROUP dentro do plano da query em vez de um estágio `$group` separado. Vou ler o número de docs que entram no group pelo `nReturned` do estágio logo abaixo do GROUP (ou do `$cursor`, se vier no formato clássico). Também não tenho 100% de certeza de que ele vai escolher o plano coberto. Se der FETCH, o docsExamined vai ser ~70 mil.
