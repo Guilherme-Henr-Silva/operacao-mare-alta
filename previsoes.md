@@ -40,3 +40,17 @@ Consulta que vou usar: `find({posicao: {$near: {$geometry: {type:"Point", coordi
 - Mas, com o limit 10, o GEO_NEAR não deve ler todos. Ele começa num anel pequeno perto do centro. Chuto `totalDocsExamined` e `totalKeysExamined` na casa das **dezenas a poucas centenas**, bem abaixo de 4 mil. Não tenho certeza do tamanho do primeiro anel, então isso é o ponto mais incerto.
 - SORT em memória: não (sem estágio SORT).
 - nReturned: **10**.
+
+## A3 — O TTL que não apaga
+
+Observação: o gerador não cria o índice TTL. Para reproduzir o cenário, vou criar o índice do "desenvolvedor anterior" do jeito que o enunciado descreve: `createIndex({registrado_em: 1}, {expireAfterSeconds: 2592000})`.
+
+**Hipótese principal:** o `registrado_em` foi gravado como **string** (o gerador faz `.toISOString()`). O monitor de TTL roda em segundo plano mais ou menos a cada 60 s e só apaga documentos cujo campo indexado é um **BSON Date** (ou array de Dates) mais antigo que `agora - expireAfterSeconds`. Uma string tipo `"2026-03-10T12:00:00.000Z"` parece data para a gente, mas para o Mongo é texto, e o TTL simplesmente ignora o documento. Não dá erro, não dá aviso: o índice existe e não faz nada.
+
+Como vou provar: um `aggregate` com `$group` por `{$type: "$registrado_em"}` deve mostrar **100.000 docs do tipo "string"** e nenhum "date". Também vou rodar `getIndexes()` para mostrar que o índice TTL está lá certinho com `expireAfterSeconds: 2592000`, e assim descartar a hipótese de que "faltou criar o índice".
+
+Hipóteses alternativas que vou descartar no caminho:
+- Índice composto (o TTL só funciona em índice de campo único). Acho que não é, o enunciado fala em índice em `registrado_em`.
+- Pouco tempo de espera (o monitor roda a cada 60 s). Também acho que não: o enunciado diz "horas depois". Além disso, como hoje é 23/11/2026 e todas as datas estão entre jan e out/2026, quase tudo já passou dos 30 dias e deveria ter sumido.
+
+Correção esperada: gravar os novos alertas com `registrado_em: new Date()` (BSON Date) e manter o índice `{registrado_em: 1}` com `expireAfterSeconds: 2592000`.
