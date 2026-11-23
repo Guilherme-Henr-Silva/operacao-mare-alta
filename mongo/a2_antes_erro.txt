@@ -1,0 +1,5 @@
+{
+  "code": 291,
+  "codeName": "NoQueryExecutionPlans",
+  "errmsg": "error processing query: ns=logiporto.movimentacoes limit=10Tree: GEONEAR  field=posicao maxdist=300 isNearSphere=0\nSort: {}\nProj: {}\n planner returned error :: caused by :: unable to find index for $geoNear query"
+}

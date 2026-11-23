@@ -1,0 +1,69 @@
+
+### 0) índice criado pelo dev anterior
+registrado_em_1
+
+### 1) getIndexes()
+[
+  {
+    v: 2,
+    key: {
+      _id: 1
+    },
+    name: '_id_'
+  },
+  {
+    v: 2,
+    key: {
+      registrado_em: 1
+    },
+    name: 'registrado_em_1',
+    expireAfterSeconds: 2592000
+  }
+]
+
+### 2) monitor de TTL: antes x depois de ~75 s
+{
+  antes: {
+    docs: 100000,
+    ttl: {
+      collSubpassesIncreasedPriority: Long('0'),
+      deletedDocuments: Long('6'),
+      passes: Long('77'),
+      subPasses: Long('77')
+    }
+  },
+  depois: {
+    docs: 100000,
+    ttl: {
+      collSubpassesIncreasedPriority: Long('0'),
+      deletedDocuments: Long('6'),
+      passes: Long('78'),
+      subPasses: Long('78')
+    }
+  }
+}
+
+### 3) alertas com mais de 30 dias
+agora: 2026-11-23T23:47:45.627Z | limite (agora - 30 dias): 2026-10-24T23:47:45.627Z
+registrado_em < limite (comparando string ISO): 98992
+registrado_em < limite (comparando BSON Date):  0
+
+### 4) aggregate por $type
+{
+  _id: 'string',
+  qtd: 100000,
+  exemplo: '2026-08-31T22:03:37.872Z'
+}
+
+### 5) contraprova com 2 alertas de teste
+logo após inserir: [{"sensor":"TESTE_A3_DATE","nivel":"info","registrado_em":{"$date":"2026-10-14T23:47:45.870Z"}},{"sensor":"TESTE_A3_STRING","nivel":"info","registrado_em":"2026-10-14T23:47:45.870Z"}]
+~75 s depois:      [{"sensor":"TESTE_A3_STRING","nivel":"info","registrado_em":"2026-10-14T23:47:45.870Z"}]
+{
+  ttl_final: {
+    collSubpassesIncreasedPriority: Long('0'),
+    deletedDocuments: Long('7'),
+    passes: Long('79'),
+    subPasses: Long('79')
+  }
+}
+total final de alertas: 100000

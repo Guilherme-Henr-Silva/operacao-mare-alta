@@ -1,0 +1,168 @@
+{
+  "explainVersion": "1",
+  "queryPlanner": {
+    "namespace": "logiporto.movimentacoes",
+    "indexFilterSet": false,
+    "parsedQuery": {
+      "$and": [
+        {
+          "classe": {
+            "$eq": "Refrigerado"
+          }
+        },
+        {
+          "terminal": {
+            "$eq": "T2"
+          }
+        },
+        {
+          "ts": {
+            "$gte": {
+              "$date": "2026-04-01T00:00:00Z"
+            }
+          }
+        }
+      ]
+    },
+    "queryHash": "115C7183",
+    "planCacheKey": "115C7183",
+    "optimizationTimeMillis": 89,
+    "maxIndexedOrSolutionsReached": false,
+    "maxIndexedAndSolutionsReached": false,
+    "maxScansToExplodeReached": false,
+    "winningPlan": {
+      "stage": "SORT",
+      "sortPattern": {
+        "peso_kg": -1
+      },
+      "memLimit": 104857600,
+      "limitAmount": 20,
+      "type": "simple",
+      "inputStage": {
+        "stage": "COLLSCAN",
+        "filter": {
+          "$and": [
+            {
+              "classe": {
+                "$eq": "Refrigerado"
+              }
+            },
+            {
+              "terminal": {
+                "$eq": "T2"
+              }
+            },
+            {
+              "ts": {
+                "$gte": {
+                  "$date": "2026-04-01T00:00:00Z"
+                }
+              }
+            }
+          ]
+        },
+        "direction": "forward"
+      }
+    },
+    "rejectedPlans": []
+  },
+  "executionStats": {
+    "executionSuccess": true,
+    "nReturned": 20,
+    "executionTimeMillis": 1437,
+    "totalKeysExamined": 0,
+    "totalDocsExamined": 400000,
+    "executionStages": {
+      "stage": "SORT",
+      "nReturned": 20,
+      "executionTimeMillisEstimate": 366,
+      "works": 400022,
+      "advanced": 20,
+      "needTime": 400001,
+      "needYield": 0,
+      "saveState": 402,
+      "restoreState": 402,
+      "isEOF": 1,
+      "sortPattern": {
+        "peso_kg": -1
+      },
+      "memLimit": 104857600,
+      "limitAmount": 20,
+      "type": "simple",
+      "totalDataSizeSorted": 6963,
+      "usedDisk": false,
+      "spills": 0,
+      "spilledDataStorageSize": 0,
+      "inputStage": {
+        "stage": "COLLSCAN",
+        "filter": {
+          "$and": [
+            {
+              "classe": {
+                "$eq": "Refrigerado"
+              }
+            },
+            {
+              "terminal": {
+                "$eq": "T2"
+              }
+            },
+            {
+              "ts": {
+                "$gte": {
+                  "$date": "2026-04-01T00:00:00Z"
+                }
+              }
+            }
+          ]
+        },
+        "nReturned": 13973,
+        "executionTimeMillisEstimate": 333,
+        "works": 400001,
+        "advanced": 13973,
+        "needTime": 386027,
+        "needYield": 0,
+        "saveState": 402,
+        "restoreState": 402,
+        "isEOF": 1,
+        "direction": "forward",
+        "docsExamined": 400000
+      }
+    }
+  },
+  "command": {
+    "find": "movimentacoes",
+    "filter": {
+      "terminal": "T2",
+      "classe": "Refrigerado",
+      "ts": {
+        "$gte": {
+          "$date": "2026-04-01T00:00:00Z"
+        }
+      }
+    },
+    "sort": {
+      "peso_kg": -1
+    },
+    "limit": 20,
+    "$db": "logiporto"
+  },
+  "serverInfo": {
+    "host": "2a3924ffd077",
+    "port": 27017,
+    "version": "7.0.48",
+    "gitVersion": "6937736f0539a5d4c8edb2970255b9369cb385a5"
+  },
+  "serverParameters": {
+    "internalQueryFacetBufferSizeBytes": 104857600,
+    "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+    "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+    "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+    "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+    "internalQueryProhibitBlockingMergeOnMongoS": 0,
+    "internalQueryMaxAddToSetBytes": 104857600,
+    "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+    "internalQueryFrameworkControl": "forceClassicEngine"
+  },
+  "ok": 1
+}

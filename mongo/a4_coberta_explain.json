@@ -1,0 +1,215 @@
+{
+  "explainVersion": "1",
+  "queryPlanner": {
+    "namespace": "logiporto.movimentacoes",
+    "indexFilterSet": false,
+    "parsedQuery": {
+      "$and": [
+        {
+          "terminal": {
+            "$eq": "T2"
+          }
+        },
+        {
+          "tipo": {
+            "$eq": "inspecao"
+          }
+        }
+      ]
+    },
+    "queryHash": "2B3D951B",
+    "planCacheKey": "B631A7E8",
+    "optimizationTimeMillis": 13,
+    "maxIndexedOrSolutionsReached": false,
+    "maxIndexedAndSolutionsReached": false,
+    "maxScansToExplodeReached": false,
+    "winningPlan": {
+      "stage": "PROJECTION_COVERED",
+      "transformBy": {
+        "_id": 0,
+        "container": 1
+      },
+      "inputStage": {
+        "stage": "IXSCAN",
+        "keyPattern": {
+          "tipo": 1,
+          "terminal": 1,
+          "container": 1
+        },
+        "indexName": "tipo_1_terminal_1_container_1",
+        "isMultiKey": false,
+        "multiKeyPaths": {
+          "tipo": [],
+          "terminal": [],
+          "container": []
+        },
+        "isUnique": false,
+        "isSparse": false,
+        "isPartial": false,
+        "indexVersion": 2,
+        "direction": "forward",
+        "indexBounds": {
+          "tipo": [
+            "[\"inspecao\", \"inspecao\"]"
+          ],
+          "terminal": [
+            "[\"T2\", \"T2\"]"
+          ],
+          "container": [
+            "[MinKey, MaxKey]"
+          ]
+        }
+      }
+    },
+    "rejectedPlans": [
+      {
+        "stage": "PROJECTION_SIMPLE",
+        "transformBy": {
+          "_id": 0,
+          "container": 1
+        },
+        "inputStage": {
+          "stage": "FETCH",
+          "filter": {
+            "tipo": {
+              "$eq": "inspecao"
+            }
+          },
+          "inputStage": {
+            "stage": "IXSCAN",
+            "keyPattern": {
+              "terminal": 1,
+              "classe": 1,
+              "peso_kg": -1,
+              "ts": 1
+            },
+            "indexName": "terminal_1_classe_1_peso_kg_-1_ts_1",
+            "isMultiKey": false,
+            "multiKeyPaths": {
+              "terminal": [],
+              "classe": [],
+              "peso_kg": [],
+              "ts": []
+            },
+            "isUnique": false,
+            "isSparse": false,
+            "isPartial": false,
+            "indexVersion": 2,
+            "direction": "forward",
+            "indexBounds": {
+              "terminal": [
+                "[\"T2\", \"T2\"]"
+              ],
+              "classe": [
+                "[MinKey, MaxKey]"
+              ],
+              "peso_kg": [
+                "[MaxKey, MinKey]"
+              ],
+              "ts": [
+                "[MinKey, MaxKey]"
+              ]
+            }
+          }
+        }
+      }
+    ]
+  },
+  "executionStats": {
+    "executionSuccess": true,
+    "nReturned": 15961,
+    "executionTimeMillis": 21,
+    "totalKeysExamined": 15961,
+    "totalDocsExamined": 0,
+    "executionStages": {
+      "stage": "PROJECTION_COVERED",
+      "nReturned": 15961,
+      "executionTimeMillisEstimate": 8,
+      "works": 15962,
+      "advanced": 15961,
+      "needTime": 0,
+      "needYield": 0,
+      "saveState": 16,
+      "restoreState": 16,
+      "isEOF": 1,
+      "transformBy": {
+        "_id": 0,
+        "container": 1
+      },
+      "inputStage": {
+        "stage": "IXSCAN",
+        "nReturned": 15961,
+        "executionTimeMillisEstimate": 8,
+        "works": 15962,
+        "advanced": 15961,
+        "needTime": 0,
+        "needYield": 0,
+        "saveState": 16,
+        "restoreState": 16,
+        "isEOF": 1,
+        "keyPattern": {
+          "tipo": 1,
+          "terminal": 1,
+          "container": 1
+        },
+        "indexName": "tipo_1_terminal_1_container_1",
+        "isMultiKey": false,
+        "multiKeyPaths": {
+          "tipo": [],
+          "terminal": [],
+          "container": []
+        },
+        "isUnique": false,
+        "isSparse": false,
+        "isPartial": false,
+        "indexVersion": 2,
+        "direction": "forward",
+        "indexBounds": {
+          "tipo": [
+            "[\"inspecao\", \"inspecao\"]"
+          ],
+          "terminal": [
+            "[\"T2\", \"T2\"]"
+          ],
+          "container": [
+            "[MinKey, MaxKey]"
+          ]
+        },
+        "keysExamined": 15961,
+        "seeks": 1,
+        "dupsTested": 0,
+        "dupsDropped": 0
+      }
+    }
+  },
+  "command": {
+    "find": "movimentacoes",
+    "filter": {
+      "tipo": "inspecao",
+      "terminal": "T2"
+    },
+    "projection": {
+      "_id": 0,
+      "container": 1
+    },
+    "$db": "logiporto"
+  },
+  "serverInfo": {
+    "host": "2a3924ffd077",
+    "port": 27017,
+    "version": "7.0.48",
+    "gitVersion": "6937736f0539a5d4c8edb2970255b9369cb385a5"
+  },
+  "serverParameters": {
+    "internalQueryFacetBufferSizeBytes": 104857600,
+    "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+    "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+    "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+    "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+    "internalQueryProhibitBlockingMergeOnMongoS": 0,
+    "internalQueryMaxAddToSetBytes": 104857600,
+    "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+    "internalQueryFrameworkControl": "forceClassicEngine"
+  },
+  "ok": 1
+}

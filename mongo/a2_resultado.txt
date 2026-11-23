@@ -1,0 +1,13 @@
+{"container":"CTN57781","tipo":"gate_in","terminal":"T4","posicao":{"type":"Point","coordinates":[-48.493029409232555,-25.46796691288473]},"dist_m":4.7}
+{"container":"CTN30016","tipo":"carga","terminal":"T5","posicao":{"type":"Point","coordinates":[-48.49296807812527,-25.467961795709563]},"dist_m":5.3}
+{"container":"CTN12691","tipo":"gate_in","terminal":"T1","posicao":{"type":"Point","coordinates":[-48.49305793120759,-25.46793148665456]},"dist_m":9.6}
+{"container":"CTN23830","tipo":"gate_out","terminal":"T3","posicao":{"type":"Point","coordinates":[-48.49285164372297,-25.467966991383584]},"dist_m":15.4}
+{"container":"CTN40074","tipo":"gate_out","terminal":"T5","posicao":{"type":"Point","coordinates":[-48.49299418661278,-25.468144782353193]},"dist_m":16.1}
+{"container":"CTN05322","tipo":"gate_out","terminal":"T2","posicao":{"type":"Point","coordinates":[-48.4929468442034,-25.46813727032859]},"dist_m":16.2}
+{"container":"CTN00738","tipo":"gate_in","terminal":"T2","posicao":{"type":"Point","coordinates":[-48.49302369909594,-25.467848776793108]},"dist_m":17}
+{"container":"CTN52500","tipo":"inspecao","terminal":"T5","posicao":{"type":"Point","coordinates":[-48.49288518828573,-25.468123418837784]},"dist_m":17.9}
+{"container":"CTN31185","tipo":"gate_out","terminal":"T2","posicao":{"type":"Point","coordinates":[-48.49303252517013,-25.468163113249467]},"dist_m":18.4}
+{"container":"CTN06245","tipo":"inspecao","terminal":"T3","posicao":{"type":"Point","coordinates":[-48.49303586000344,-25.468171097256707]},"dist_m":19.4}
+
+resultados com [lat, lon] invertido: 0
+total dentro do raio de 300 m (ordem certa): 4095

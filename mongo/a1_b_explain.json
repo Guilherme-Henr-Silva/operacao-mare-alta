@@ -1,0 +1,210 @@
+{
+  "explainVersion": "1",
+  "queryPlanner": {
+    "namespace": "logiporto.movimentacoes",
+    "indexFilterSet": false,
+    "parsedQuery": {
+      "$and": [
+        {
+          "classe": {
+            "$eq": "Refrigerado"
+          }
+        },
+        {
+          "terminal": {
+            "$eq": "T2"
+          }
+        },
+        {
+          "ts": {
+            "$gte": {
+              "$date": "2026-04-01T00:00:00Z"
+            }
+          }
+        }
+      ]
+    },
+    "queryHash": "115C7183",
+    "planCacheKey": "FE6945F0",
+    "optimizationTimeMillis": 17,
+    "maxIndexedOrSolutionsReached": false,
+    "maxIndexedAndSolutionsReached": false,
+    "maxScansToExplodeReached": false,
+    "winningPlan": {
+      "stage": "FETCH",
+      "inputStage": {
+        "stage": "SORT",
+        "sortPattern": {
+          "peso_kg": -1
+        },
+        "memLimit": 104857600,
+        "limitAmount": 20,
+        "type": "default",
+        "inputStage": {
+          "stage": "IXSCAN",
+          "keyPattern": {
+            "terminal": 1,
+            "classe": 1,
+            "ts": 1,
+            "peso_kg": -1
+          },
+          "indexName": "terminal_1_classe_1_ts_1_peso_kg_-1",
+          "isMultiKey": false,
+          "multiKeyPaths": {
+            "terminal": [],
+            "classe": [],
+            "ts": [],
+            "peso_kg": []
+          },
+          "isUnique": false,
+          "isSparse": false,
+          "isPartial": false,
+          "indexVersion": 2,
+          "direction": "forward",
+          "indexBounds": {
+            "terminal": [
+              "[\"T2\", \"T2\"]"
+            ],
+            "classe": [
+              "[\"Refrigerado\", \"Refrigerado\"]"
+            ],
+            "ts": [
+              "[new Date(1775001600000), new Date(9223372036854775807)]"
+            ],
+            "peso_kg": [
+              "[MaxKey, MinKey]"
+            ]
+          }
+        }
+      }
+    },
+    "rejectedPlans": []
+  },
+  "executionStats": {
+    "executionSuccess": true,
+    "nReturned": 20,
+    "executionTimeMillis": 34,
+    "totalKeysExamined": 13973,
+    "totalDocsExamined": 20,
+    "executionStages": {
+      "stage": "FETCH",
+      "nReturned": 20,
+      "executionTimeMillisEstimate": 1,
+      "works": 13995,
+      "advanced": 20,
+      "needTime": 13974,
+      "needYield": 0,
+      "saveState": 13,
+      "restoreState": 13,
+      "isEOF": 1,
+      "docsExamined": 20,
+      "alreadyHasObj": 0,
+      "inputStage": {
+        "stage": "SORT",
+        "nReturned": 20,
+        "executionTimeMillisEstimate": 1,
+        "works": 13995,
+        "advanced": 20,
+        "needTime": 13974,
+        "needYield": 0,
+        "saveState": 13,
+        "restoreState": 13,
+        "isEOF": 1,
+        "sortPattern": {
+          "peso_kg": -1
+        },
+        "memLimit": 104857600,
+        "limitAmount": 20,
+        "type": "default",
+        "totalDataSizeSorted": 1920,
+        "usedDisk": false,
+        "spills": 0,
+        "spilledDataStorageSize": 0,
+        "inputStage": {
+          "stage": "IXSCAN",
+          "nReturned": 13973,
+          "executionTimeMillisEstimate": 1,
+          "works": 13974,
+          "advanced": 13973,
+          "needTime": 0,
+          "needYield": 0,
+          "saveState": 13,
+          "restoreState": 13,
+          "isEOF": 1,
+          "keyPattern": {
+            "terminal": 1,
+            "classe": 1,
+            "ts": 1,
+            "peso_kg": -1
+          },
+          "indexName": "terminal_1_classe_1_ts_1_peso_kg_-1",
+          "isMultiKey": false,
+          "multiKeyPaths": {
+            "terminal": [],
+            "classe": [],
+            "ts": [],
+            "peso_kg": []
+          },
+          "isUnique": false,
+          "isSparse": false,
+          "isPartial": false,
+          "indexVersion": 2,
+          "direction": "forward",
+          "indexBounds": {
+            "terminal": [
+              "[\"T2\", \"T2\"]"
+            ],
+            "classe": [
+              "[\"Refrigerado\", \"Refrigerado\"]"
+            ],
+            "ts": [
+              "[new Date(1775001600000), new Date(9223372036854775807)]"
+            ],
+            "peso_kg": [
+              "[MaxKey, MinKey]"
+            ]
+          },
+          "keysExamined": 13973,
+          "seeks": 1,
+          "dupsTested": 0,
+          "dupsDropped": 0
+        }
+      }
+    }
+  },
+  "command": {
+    "find": "movimentacoes",
+    "filter": {
+      "terminal": "T2",
+      "classe": "Refrigerado",
+      "ts": {
+        "$gte": {
+          "$date": "2026-04-01T00:00:00Z"
+        }
+      }
+    },
+    "sort": {
+      "peso_kg": -1
+    },
+    "limit": 20,
+    "$db": "logiporto"
+  },
+  "serverInfo": {
+    "host": "2a3924ffd077",
+    "port": 27017,
+    "version": "7.0.48",
+    "gitVersion": "6937736f0539a5d4c8edb2970255b9369cb385a5"
+  },
+  "serverParameters": {
+    "internalQueryFacetBufferSizeBytes": 104857600,
+    "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+    "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+    "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+    "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+    "internalQueryProhibitBlockingMergeOnMongoS": 0,
+    "internalQueryMaxAddToSetBytes": 104857600,
+    "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+    "internalQueryFrameworkControl": "forceClassicEngine"
+  },
+  "ok": 1
+}
