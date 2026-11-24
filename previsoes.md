@@ -132,3 +132,30 @@ Pipeline original (com CLASSE_ALVO = "Refrigerado"):
 - Deve usar o índice da B1 `{classe, ts, terminal, peso_kg}`, com `classe` igual e `ts` de MinKey a MaxKey, **coberto**: `totalDocsExamined` 0 e `totalKeysExamined` ~100.000 (todos os Refrigerado do ano).
 - ~100.000 docs entram no `$group`, saem 5 grupos e o resultado final tem 3.
 - Os pesos totais devem ficar na casa de ~320 milhões de kg por terminal (~20 mil movimentações × ~16 mil kg).
+
+## C2 — Investigação societária e operacional
+
+O que eu já sei pela C1 (não é o resultado da C2, só a vizinhança direta): a E22 tem **uma** aresta `SOCIA_DE` saindo, para a E11 (pct 10), e **nenhuma** chegando.
+
+**Direção escolhida: saindo da sancionada**, `(s:Empresa {cnpj:'E22'})-[:SOCIA_DE*1..3]->(x:Empresa)`.
+- `(a)-[:SOCIA_DE]->(b)` quer dizer "a tem participação em b". Seguindo as setas a partir da E22, chego nas empresas em que ela tem participação direta ou indireta (E22 → E11 → … → …), ou seja, nas empresas que ela consegue influenciar ou usar de fachada para continuar exportando. Esse é o risco que a investigação quer pegar: a carga da sancionada saindo no nome de outra.
+- O caminho contrário (quem é dono da E22) também seria interessante, mas no meu grafo não tem ninguém apontando para a E22. Mesmo assim, não usar direção nenhuma (`-[:SOCIA_DE*1..3]-`) seria pior: a partir do 2º nível, ele começa a misturar "sócios dos sócios" com "empresas irmãs", que não têm relação de controle nenhuma com a sancionada. E ainda multiplica os caminhos (que é o problema do trecho (ii) da C3).
+- `*1..3` limita a profundidade a 3 níveis, como o enunciado pede.
+
+Consulta que vou rodar:
+
+```cypher
+MATCH (s:Empresa {sancionada:true})-[:SOCIA_DE*1..3]->(x:Empresa)
+WHERE x <> s
+MATCH (ks:Container)-[:PERTENCE_A]->(s),
+      (ks)-[ps:PASSOU_POR]->(t:Terminal)<-[px:PASSOU_POR]-(kx:Container)-[:PERTENCE_A]->(x)
+WHERE ps.data = px.data
+RETURN DISTINCT x.nome AS empresa_investigada, kx.id AS container, t.nome AS terminal, px.data AS data
+ORDER BY data, terminal, empresa_investigada
+```
+
+**Quantas empresas devo alcançar:** são 45 arestas `SOCIA_DE` para 30 empresas, então cada empresa tem em média 1,5 sócias "pra frente". Nível 1 = 1 (a E11, que já sei), nível 2 ≈ 1,5 e nível 3 ≈ 2. Fica algo como **3 a 5 empresas** alcançáveis, talvez menos se houver ciclos voltando.
+
+**Quantas linhas no resultado:** a E22 tem 10 passagens (5 contêineres × 2). Existem 5 terminais × 30 dias = 150 combinações (terminal, data), então uma passagem qualquer tem chance ~10/150 = 1/15 de coincidir com alguma da sancionada. Cada empresa tem uns 3 contêineres (90/30) e 6 passagens. Com ~4 empresas, são ~24 passagens × 1/15 ≈ **1 a 2 linhas**. Ordem de grandeza: **unidades** (0 a ~5). Pode muito bem dar 0, e aí o resultado também é informativo.
+
+O `DISTINCT` é necessário: a mesma empresa pode ser alcançada por mais de um caminho (por exemplo, E22→A→B e E22→A→C→B), e cada caminho duplicaria a linha.
