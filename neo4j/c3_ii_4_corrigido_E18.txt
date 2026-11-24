@@ -1,0 +1,2 @@
+caminhos, empresas_distintas
+17, 7

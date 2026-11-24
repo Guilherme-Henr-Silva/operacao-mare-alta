@@ -1,0 +1,3 @@
+
+0 rows
+ready to start consuming query after 8 ms, results consumed after another 13 ms

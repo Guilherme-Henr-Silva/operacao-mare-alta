@@ -59,3 +59,22 @@
 ## Fim da Parte B — índices
 
 - Ficaram 5 índices em `movimentacoes`, cada um vencedor em alguma questão. A B2 não precisou de índice novo, porque reaproveitou o da B1. Foi por isso que coloquei `terminal` e `peso_kg` nele.
+
+## C1
+
+- Antes de desenhar, consultei o Neo4j pra pegar o subgrafo real da E22. Esperava uns 2 ou 3 sócios diretos (são 45 arestas pra 30 empresas, ~3 por empresa contando entrada e saída), mas a E22 só tem **uma**: ela é sócia da E11 com 10%. Ninguém é sócio dela.
+- Descobri que o K31, que é um dos contêineres da E22, está no topo da pilha da minha BASE_DA_PILHA (K31 → K30 → K29 → K28). Coloquei no diagrama porque isso vai aparecer de novo no trecho (iii) da C3.
+- No Mermaid não dá pra fazer seta de um nó pra ele mesmo de um jeito legível, então no modelo desenhei duas caixas de `:Empresa` e duas de `:Container`, com uma nota explicando que é o mesmo rótulo.
+
+## C2
+
+- **Acertei a direção e a ordem de grandeza, mas o número foi o extremo:** previ "unidades, pode dar 0" e deu **0 linhas**. Na previsão eu tinha chutado ~3 a 5 empresas alcançáveis em 3 níveis, mas só deu 1 (E11). A conta de "média 1,5 sócias por empresa" não vale aqui: a E11 não tem nenhuma outra aresta `SOCIA_DE`, então E22 e E11 ficam isoladas do resto da rede.
+- Quando vi o 0, desconfiei de mim primeiro. Testei: sem o `DISTINCT` também dá 0; sem direção, a única empresa ligada continua sendo a E11; e os contêineres da E11 (K23, K38, K63) só passaram pelo T3, onde a E22 nunca esteve.
+- Para ter certeza de que a parte de "mesmo terminal e mesma data" estava certa, rodei um controle sem exigir vínculo societário e vieram 15 encontros com outras empresas. Então a consulta funciona, e o 0 é o resultado verdadeiro no meu grafo.
+
+## C3
+
+- **(i):** o CREATE criou 2 nós novos, exatamente como o enunciado avisava. Antes de apagar, conferi que as cópias eram as que tinham `nome` nulo (as originais têm "Empresa 1"/"Empresa 2"), e apaguei só elas com `DETACH DELETE`. Rodei o corrigido duas vezes de propósito: na segunda, o `cypher-shell` não criou nada. Isso deixou uma aresta E1→E2 nova no grafo (agora são 46 `SOCIA_DE`). Conferi que ela não mexe na C2, porque E1 e E2 não estão no componente da E22.
+- **(ii):** esperava que ia travar e **não travou**: com a E22 voltou 1 linha em menos de 1 s, porque o componente dela tem só 2 nós. Para mostrar o defeito mesmo assim, rodei o mesmo padrão a partir da E18, que tem mais ligações, aumentando a profundidade aos poucos e com corte de 30 s. Foi de 8 caminhos para 1,29 milhão na profundidade 14, enquanto as empresas distintas pararam em 28 já na profundidade 4. A versão totalmente sem limite a partir da E18 eu **não rodei**, porque a curva já mostrava que ia ficar pesada e eu não quis arriscar travar o Neo4j.
+- **(iii):** para provar que eram dois defeitos separados, rodei uma versão intermediária trocando só 'BASE_DA_PILHA' por 'K28'. Continuou 0, porque a base não está apoiada em ninguém: os outros é que apontam pra ela. Só com o id certo **e** a seta `<-` deu K29, K30 e K31.
+- **(iv):** conferi com uma conta de controle: 23 perigosos × 2 passagens = 46, que é exatamente a soma do `count(k)` original. Com `DISTINCT` a soma cai para 40, e a diferença (6) são os 6 contêineres que passaram duas vezes no mesmo terminal.

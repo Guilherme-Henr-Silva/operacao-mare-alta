@@ -1,0 +1,20 @@
+### execução 1
++---------------------------------+
+| de          | para        | pct |
++---------------------------------+
+| "Empresa 1" | "Empresa 2" | 30  |
++---------------------------------+
+
+1 row
+ready to start consuming query after 523 ms, results consumed after another 40 ms
+Created 1 relationships, Set 1 properties
+### execução 2
++---------------------------------+
+| de          | para        | pct |
++---------------------------------+
+| "Empresa 1" | "Empresa 2" | 30  |
++---------------------------------+
+
+1 row
+ready to start consuming query after 1 ms, results consumed after another 2 ms
+Set 1 properties

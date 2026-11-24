@@ -1,0 +1,3 @@
+0 rows
+ready to start consuming query after 245 ms, results consumed after another 0 ms
+Deleted 2 nodes, Deleted 1 relationships

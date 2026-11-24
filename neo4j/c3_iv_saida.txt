@@ -1,0 +1,52 @@
+// (iv) ANTES: trecho original
+MATCH (k:Container)-[:PASSOU_POR]->(t:Terminal) WHERE k.classe = 'Perigoso' RETURN t.nome, count(k) ORDER BY t.nome;
++-------------------+
+| t.nome | count(k) |
++-------------------+
+| "T1"   | 13       |
+| "T2"   | 8        |
+| "T3"   | 10       |
+| "T4"   | 5        |
+| "T5"   | 10       |
++-------------------+
+
+5 rows
+
+// CORRIGIDO: conta cada contêiner uma vez por terminal
+MATCH (k:Container)-[:PASSOU_POR]->(t:Terminal) WHERE k.classe = 'Perigoso' RETURN t.nome AS terminal, count(DISTINCT k) AS conteineres_perigosos ORDER BY terminal;
++----------------------------------+
+| terminal | conteineres_perigosos |
++----------------------------------+
+| "T1"     | 11                    |
+| "T2"     | 8                     |
+| "T3"     | 8                     |
+| "T4"     | 4                     |
+| "T5"     | 9                     |
++----------------------------------+
+
+5 rows
+
+// lado a lado + quem passou 2x no mesmo terminal
+MATCH (k:Container)-[p:PASSOU_POR]->(t:Terminal) WHERE k.classe = 'Perigoso' WITH t, k, count(p) AS vezes RETURN t.nome AS terminal, sum(vezes) AS count_k, count(k) AS count_distinct_k, [x IN collect(CASE WHEN vezes > 1 THEN k.id END) WHERE x IS NOT NULL] AS passaram_2x ORDER BY terminal;
++--------------------------------------------------------+
+| terminal | count_k | count_distinct_k | passaram_2x    |
++--------------------------------------------------------+
+| "T1"     | 13      | 11               | ["K0", "K83"]  |
+| "T2"     | 8       | 8                | []             |
+| "T3"     | 10      | 8                | ["K12", "K63"] |
+| "T4"     | 5       | 4                | ["K53"]        |
+| "T5"     | 10      | 9                | ["K30"]        |
++--------------------------------------------------------+
+
+5 rows
+
+// total de contêineres perigosos no grafo
+MATCH (k:Container {classe:'Perigoso'}) RETURN count(k) AS total_perigosos;
++-----------------+
+| total_perigosos |
++-----------------+
+| 23              |
++-----------------+
+
+1 row
+

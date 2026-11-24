@@ -1,0 +1,14 @@
+// caminhos sem direção a partir da E18 (maior grau do componente grande), profundidade máxima k
+k | caminhos | empresas_distintas | tempo_ms
+1 | 8, 6 | 2474
+2 | 29, 15 | 2527
+3 | 98, 23 | 3254
+4 | 288, 28 | 2674
+5 | 827, 28 | 2035
+6 | 2209, 28 | 2034
+7 | 5573, 28 | 2103
+8 | 13644, 28 | 2266
+9 | 31436, 28 | 2095
+10 | 71589, 28 | 2386
+12 | 324549, 28 | 2300
+14 | 1290481, 28 | 3215

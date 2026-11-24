@@ -1,0 +1,19 @@
+sentido, de, para, nome, pct
+"E22 -> x", "E22", "E11", "Empresa 11", 10
+s.cnpj, s.nome, s.sancionada
+"E22", "Empresa 22", TRUE
+k.id, k.classe, t.nome, p.data
+"K0", "Perigoso", "T1", "2026-10-20"
+"K0", "Perigoso", "T1", "2026-10-26"
+"K1", "Granel", "T2", "2026-10-05"
+"K1", "Granel", "T5", "2026-10-20"
+"K2", "Granel", "T5", "2026-10-03"
+"K2", "Granel", "T5", "2026-10-18"
+"K31", "Geral", "T2", "2026-10-22"
+"K31", "Geral", "T2", "2026-10-28"
+"K8", "Perigoso", "T5", "2026-10-09"
+"K8", "Perigoso", "T2", "2026-10-18"
+topo, base
+"K29", "K28"
+"K30", "K29"
+"K31", "K30"

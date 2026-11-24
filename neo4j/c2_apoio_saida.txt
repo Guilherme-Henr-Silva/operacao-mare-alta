@@ -1,0 +1,15 @@
+empresa, nivel, caminhos
+"E11", 1, 1
+linhas_sem_distinct
+0
+direcao, empresas
+"sem direcao", 1
+de, para, pct
+"E22", "E11", 10
+container_E11, terminal, data
+"K23", "T3", "2026-10-01"
+"K63", "T3", "2026-10-01"
+"K38", "T3", "2026-10-10"
+"K23", "T3", "2026-10-13"
+"K38", "T3", "2026-10-21"
+"K63", "T3", "2026-10-30"

@@ -1,0 +1,3 @@
+0 rows
+ready to start consuming query after 92 ms, results consumed after another 0 ms
+Added 2 nodes, Created 1 relationships, Set 3 properties, Added 2 labels

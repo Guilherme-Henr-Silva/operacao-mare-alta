@@ -55,3 +55,20 @@ operacao-mare-alta/
 ├── mongo/         # geradores, scripts, saídas e JSONs de explain (Partes A e B)
 └── neo4j/         # grafo.cypher, consultas, evidências e diagrama (Parte C)
 ```
+
+## Onde está cada resposta
+
+| Questão | Análise | Scripts / evidências |
+|---|---|---|
+| A1 | [mongo/a1_analise.md](mongo/a1_analise.md) | `mongo/a1.js`, `mongo/a1_*_explain.json` |
+| A2 | [mongo/a2_analise.md](mongo/a2_analise.md) | `mongo/a2.js`, `mongo/a2_explain.json` |
+| A3 | [mongo/a3_analise.md](mongo/a3_analise.md) | `mongo/a3.js`, `mongo/a3_saida.txt` |
+| A4 | [mongo/a4_analise.md](mongo/a4_analise.md) | `mongo/a4.js`, `mongo/a4_*_explain.json` |
+| B1 | [mongo/b1_analise.md](mongo/b1_analise.md) | `mongo/b1.js`, `mongo/b1_*_explain.json` |
+| B2 | [mongo/b2_analise.md](mongo/b2_analise.md) | `mongo/b2.js`, `mongo/b2_*` |
+| Índices (fim de A e B) | [mongo/b2_analise.md](mongo/b2_analise.md#auditoria-de-índices--fim-das-partes-a-e-b) | `mongo/indices_fim_parte_A.txt`, `mongo/indices_fim_partes_A_B.txt` |
+| C1 | [neo4j/diagrama.md](neo4j/diagrama.md) | `neo4j/c1_consultas.cypher`, `neo4j/c1_subgrafo_E22.txt` |
+| C2 | [neo4j/c2_analise.md](neo4j/c2_analise.md) | `neo4j/c2.cypher`, `neo4j/c2_*` |
+| C3 | [neo4j/c3_analise.md](neo4j/c3_analise.md) | `neo4j/c3_*` |
+
+Índices finais em `logiporto.movimentacoes`: `_id_`, `terminal_1_classe_1_peso_kg_-1_ts_1` (A1), `posicao_2dsphere` (A2), `tipo_1_terminal_1_container_1` (A4), `classe_1_ts_1_terminal_1_peso_kg_1` (B1/B2). Em `alertas`: `_id_` e o TTL `registrado_em_1` (A3).
